@@ -1,0 +1,54 @@
+KSS PHP SDK
+============
+
+KSS PHP SDK allows you to operate the file to kss.
+
+Authors
+-------
+- Was originally written by [Aeris](ggjjlldd@163.com).
+
+Install
+-------
+cd kssphpsdk2
+curl -s http://getcomposer.org/installer | php && ./composer.phar install
+
+Overview
+--------
+KSS PHP SDK have follow operation:
+           
+Functional operation :
+$s3 = new s3_method();
+
+$s3->create_bucket($creat_bucket);
+
+$s3->create_object($create_object);
+
+$s3->create_object_file($create_object_file);
+
+$s3->list_bucket($list_bucket);
+
+$s3->get_object($get_object);
+
+$s3->delete_object($delete_object);
+
+$s3->delete_bucket($delete_bucket);
+
+Follow is a method to support multipart upload
+$mul = new part();
+$mul->multi_upload($multi);
+
+Follow is a method to support multipart upload using multi-thread
+multi_thread_upload($multi);
+
+sign.php method:
+sign.php can generate the url to download object
+the method to generate url is :
+url($listall);
+
+form_post.php is a demo to generate a website to upload your file for kss
+you need install apache2 server
+cp form_post.php /var/www
+
+START
+--------
+main.php is a simple demo 
