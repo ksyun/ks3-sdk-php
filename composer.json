@@ -1,0 +1,32 @@
+{
+    "name": "kss/kss-sdk-php",
+    "homepage": "http://kss.ksyun.com",
+    "description":"KSS SDK for PHP",
+    "keywords":["kss","sdk","s3","dynamodb"],
+    "type":"library",
+    "license":"Apache-2.0",
+    "authors":[
+        {
+            "name":"Kss Web Services",
+            "homepage":"http://kss.ksyun.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "guzzle/guzzle": ">=3.4.3,<4"
+    },
+    "suggest": {
+        "doctrine/cache": "Adds support for caching of credentials and responses"
+    },
+   
+    "autoload": {
+        "psr-0": {
+            "kss": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.3.x-dev"
+        }
+    }
+}
