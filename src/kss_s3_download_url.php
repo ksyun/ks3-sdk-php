@@ -1,8 +1,7 @@
 <?php
-# this is a demo to get signature url of object
-# may be you do not need header field in your array
-# the main function your need to call is url($req)
-
+	
+   $host = ".kss.ksyun.com/";
+   $proto = "http://";
    $signableQueryString = array(
         'acl', 'delete', 'lifecycle', 'location', 'logging', 'notification',
         'partNumber', 'policy', 'requestPayment', 'torrent', 'uploadId',
@@ -30,19 +29,22 @@
     $signableHeaders = array('Content-MD5', 'Content-Type');
     
     function url(array $credentials){
+    	global $host;
+    	global $proto;
     	$query = args_deal($credentials["query"]);
     	$sign = sign_create($credentials);
+    	$sign = rawurlencode($sign);
     	$object = rawurlencode($credentials['object']);
-    	$url = "http://".$credentials['bucket'].".kss.ksyun.com/".$object.$query.'&Signature='.$sign;
+    	$url = $proto.$credentials['bucket'].$host.$object.$query.'&Signature='.$sign;
     	echo $url;
     	
     }
 
     function sign_create(array $credentials)
     {
-        $stringToSign = createCanonicalizedString($credentials);
+        $stringToSign = createCanonicalizedString($credentials, $credentials["query"]["Expires"]);
         $sign = signString($stringToSign, $credentials["crendit"]["access_key"]);
-        return $sign;
+        return $sign;  
     }
 
     function signString($string, $credentials)
@@ -50,39 +52,11 @@
         return base64_encode(hash_hmac('sha1', $string, $credentials, true));
     }
 
-    function createCanonicalizedAmzHeaders($req_header)
-    {
-        $headers = array();
-        foreach ($req_header as $item => $value) {
-            $name = strtolower($item);
-            if (strpos($name, 'x-kss-') === 0) {
-                if ($value || $value === '0') {
-                    $req_header[$name] = $name . ':' . $value;
-                }
-            }
-        }
-
-        if (empty($req_header)) {
-            return '';
-        } else {
-            ksort($req_header);
-
-            return implode("\n", $req_header) . "\n";
-        }
-    }
-    
-    
     function createCanonicalizedString(array $req, $expires = null)
     {
     	global $signableQueryString;
-        $buffer = $req['method'] . "\n";
-        $buffer .= array_key_exists("Content-MD5", $req["header"]) ? $req["header"]["Content-MD5"]:null;
-        $buffer .="\n";
-        $buffer .= array_key_exists("Content-Type",$req["header"]) ? $req["header"]["Content-Type"]:null;
-        $buffer .="\n";
-        $buffer .= array_key_exists("Date",$req["header"]) ? $req["header"]["Date"]:null;
-        $buffer .="\n";
-        $buffer .= createCanonicalizedAmzHeaders($req["header"]);
+        $buffer = $req['method'] . "\n\n\n";
+        $buffer.= $expires."\n";
         $bucket = array_key_exists("bucket", $req) ? $req["bucket"]:null;
         $buffer .= $bucket ? "/{$bucket}" : '';
         
@@ -107,18 +81,24 @@
         }
         return $buffer;    
     }
-    
+  
+    #This is a demo to use signature api
+    # First create a array var named $listall, in this array, add your crendit message 
+    # in the query field, you choose useful query args to add
+    # 'Expires' mark the expires time , in the example, we choose one day
     $listall = array(
 			'crendit' => array(
-			'access_id' => "FWJ4LA7KVMKW26YOUWZQ",
-			'access_key' => "dDhI3IblBm4xzzuhW/Z95HDFB4fBzp1fJuRvwDK8",
+			'access_id' => "your access id",
+			'access_key' => "your access key",
 			),
 			'method' => 'GET',
-			'bucket' => 'dfyl',
-			'object' => '2013-07-04/CC-（交互流程设计）咖啡馆课程.rar',
+			'bucket' => 'your bucket name',
+			'object' => 'your file name',
 			'header' => array(),
 			'query' => array('response-content-disposition' =>'attachment; filename=fname.ext',
-			'response-content-type' => 'text/html'
+			'response-content-type' => 'text/html',
+			'Expires' => $t = time() + (3600*24),
+			'KSSAccessKeyId' => "your access id",
 			)
            );
            
